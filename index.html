@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior: smooth; }
+  [id] { scroll-margin-top: 86px; }
+  body { margin: 0; background: #f7f5f1; color: #14171a; font-family: "Source Serif 4", Georgia, serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #14171a; text-decoration-color: #b8b2a8; text-underline-offset: 3px; }
+  a:hover { color: #1d7a52; text-decoration-color: #1d7a52; }
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; height: 28px; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 2px; background: #d6d0c6; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -9px; border-radius: 50%; background: #14171a; border: 3px solid #f7f5f1; box-shadow: 0 0 0 1px #14171a; cursor: pointer; }
+  input[type=range]::-moz-range-track { height: 2px; background: #d6d0c6; }
+  input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #14171a; border: 3px solid #f7f5f1; cursor: pointer; }
+</style>
+</helmet>
+
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 40px 120px">
+
+  <header id="top" style="display: flex; flex-direction: column; gap: 34px; padding: 68px 0 0">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <div style="display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b665e">
+        <span style="display: inline-block; padding: 5px 10px; border: 1px solid #14171a; color: #14171a">BMVC 2026</span>
+        <span>Video Tokenisation</span>
+      </div>
+      <img src="assets/bmvc-2026-logo.png" alt="BMVC 2026" style="height: 40px; width: auto; opacity: 0.9" />
+    </div>
+
+    <h1 style="margin: 0; font-size: 62px; line-height: 1.06; font-weight: 600; letter-spacing: -0.022em; max-width: 20ch; text-wrap: balance">Adaptive Tokenisation via Temporal Redundancy Masking and Latent Inpainting</h1>
+
+    <p style="margin: 0; max-width: 62ch; font-size: 21px; line-height: 1.5; color: #3c3f43">A video tokeniser that decides its own token budget from the encoder pass alone — no router, no scorer, no extra decoder pass. <strong style="font-weight: 600">31&times; faster</strong> allocation than search-based adaptive tokenisers at a matched keep rate.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 18px">
+      <div style="display: flex; flex-wrap: wrap; gap: 4px 22px; line-height: 1.5">
+        <span>Kevin Dave<sup style="color: #6b665e">*1</sup></span>
+        <span>Sai Aditya Patkuri<sup style="color: #6b665e">*1,2</sup></span>
+        <span>Chhaya Kumar Das<sup style="color: #6b665e">*1</sup></span>
+        <span>Gouranga Bala<sup style="color: #6b665e">1,3</sup></span>
+        <span>Rajesh Kumar S A<sup style="color: #6b665e">1</sup></span>
+        <span>R. Venkatesh Babu<sup style="color: #6b665e">2</sup></span>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; color: #6b665e; font-family: 'IBM Plex Sans', sans-serif">
+        <span><sup>1</sup> Phronetic AI</span>
+        <span><sup>2</sup> Vision and AI Lab (VAL), Indian Institute of Science</span>
+        <span><sup>3</sup> Indian Institute of Technology Bombay</span>
+        <span><sup>*</sup> Equal contribution</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px">
+      <a href="https://arxiv.org/abs/2606.06158" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px; background: #14171a; color: #f7f5f1; text-decoration: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500" style-hover="background: #1d7a52">
+        <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.6">arXiv</span> Paper
+      </a>
+      <a href="assets/BMVC_Poster.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px; border: 1px solid #14171a; color: #14171a; text-decoration: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500" style-hover="background: #14171a; color: #f7f5f1">
+        <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.5">PDF</span> Poster
+      </a>
+      <span style="display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px; border: 1px dashed #c2bcb2; color: #8a847a; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500">
+        <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.7">Code</span> Coming soon
+      </span>
+      <a href="#bibtex" style="display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px; border: 1px solid #14171a; color: #14171a; text-decoration: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500" style-hover="background: #14171a; color: #f7f5f1">
+        <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.5">&#123;&#125;</span> BibTeX
+      </a>
+    </div>
+  </header>
+
+  <div style="display: flex; align-items: center; gap: 30px; margin: 44px 0 0; padding: 22px 0; border-top: 1px solid #e2ddd4; border-bottom: 1px solid #e2ddd4; flex-wrap: wrap">
+    <img src="assets/phroneticai_logo_final.png" alt="Phronetic AI" style="height: 30px; width: auto" />
+    <img src="assets/iisc_logo_final.png" alt="IISc" style="height: 42px; width: auto" />
+    <img src="assets/VAL_Logo2.png" alt="VAL" style="height: 32px; width: auto" />
+    <img src="assets/iitb_logo_final.png" alt="IIT Bombay" style="height: 38px; width: auto" />
+  </div>
+
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="budget">01 &nbsp;/&nbsp; The budget follows the content</div>
+    <figure style="margin: 0">
+      <img src="assets/token_usage.jpg" alt="Token usage over time for one clip: static intervals collapse towards zero, motion and scene cuts spike." style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4" />
+      <figcaption style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; max-width: 88ch; font-family: 'IBM Plex Sans', sans-serif">One clip, one fixed threshold. The retained fraction tracks the content: static intervals collapse towards zero, motion and scene cuts spike to full rate. Per-video drop rates span <strong style="color: #14171a; font-weight: 600">5.15% to 86.10%</strong> on UCF-101 &mdash; without any per-clip search.</figcaption>
+    </figure>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="abstract">02 &nbsp;/&nbsp; Abstract</div>
+    <div style="display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: start">
+      <div style="display: flex; flex-direction: column; gap: 20px; font-size: 19px; line-height: 1.62; color: #24272b">
+        <p style="margin: 0">Video tokenisers spend a fixed token budget on every clip: a static shot and a fight scene cost exactly the same. Adaptive tokenisers fix that, but pay a search or routing tax &mdash; ElasticTok runs a binary search over <span style="font-family: 'IBM Plex Mono', monospace; font-size: 0.9em">log&#8322;N</span> decoder passes, InfoTok needs an extra full-rate decoder pass.</p>
+        <p style="margin: 0">We show that overhead is unnecessary. The latent space of a <em>frozen</em> continuous tokeniser already exposes temporal redundancy: if a latent position barely changed since the last kept frame, drop it &mdash; and inpaint it back before decoding. A parameter-free temporal-L1 criterion produces the mask directly from the encoder output, and a 2.7&nbsp;M-parameter Latent Inpainting Transformer (LIT) refills the dropped positions in the backbone's native latent space.</p>
+        <p style="margin: 0">The result is a tokeniser whose compression rate emerges from the video rather than being imposed on it, controlled by a single interpretable scalar <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span>, with zero extra forward evaluations to allocate the budget.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; border-top: 2px solid #14171a">
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 20px 0; border-bottom: 1px solid #e2ddd4">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b665e">Parameter free</div>
+          <div style="font-size: 17px; line-height: 1.5; color: #24272b">No learned router or scorer. One interpretable scalar, calibrated once per backbone.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 20px 0; border-bottom: 1px solid #e2ddd4">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b665e">Single pass</div>
+          <div style="font-size: 17px; line-height: 1.5; color: #24272b">The mask needs only <span style="font-family: 'IBM Plex Mono', monospace">z</span> &mdash; zero extra forward evaluations to allocate the budget.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 20px 0; border-bottom: 1px solid #e2ddd4">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b665e">Content adaptive</div>
+          <div style="font-size: 17px; line-height: 1.5; color: #24272b">The compression rate emerges from the video rather than being imposed on it.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="method">03 &nbsp;/&nbsp; Method</div>
+    <figure style="margin: 0 0 44px">
+      <img src="assets/architecture.jpg" alt="Pipeline: frozen encoder, temporal-L1 masking, LIT latent inpainting, frozen decoder." style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4; padding: 20px 0" />
+      <figcaption style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">Only LIT is trained. Encoder and decoder stay frozen throughout.</figcaption>
+    </figure>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <h3 style="margin: 0; font-size: 25px; font-weight: 600; letter-spacing: -0.01em">Temporal-L1 masking</h3>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #3c3f43">Each latent position is judged against its own history: how far has it moved since the last time this position was <em>kept</em>? The distance is a channel-averaged absolute difference &mdash; nothing learned, nothing tuned.</p>
+        <div style="background: #fff; border: 1px solid #e2ddd4; padding: 26px 24px 22px; display: flex; flex-direction: column; gap: 18px; overflow-x: auto">
+          <div style="font-size: 17px; color: #14171a">$$\Delta(t',y,x) \;=\; \frac{1}{C}\sum_{c=1}^{C}\bigl| z[c,t',y,x] - z[c,\rho(y,x,t'),y,x] \bigr|$$</div>
+          <div style="font-size: 17px; color: #14171a; padding-top: 2px; border-top: 1px solid #eeeae3">$$m(t',y,x) \;=\; \mathbb{1}\bigl[\, \Delta(t',y,x) \ge \tau \,\bigr]$$</div>
+          <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.6; color: #8a847a">where $\rho(y,x,t')$ is the most recently kept temporal position at $(y,x)$, and $C$ is the latent channel count.</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e2ddd4; padding: 4px 24px">
+          <div style="display: flex; gap: 18px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid #eeeae3">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #2ca86b; min-width: 52px">keep</span>
+            <span style="font-size: 17px; line-height: 1.5; color: #24272b">the position moved by at least <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span></span>
+          </div>
+          <div style="display: flex; gap: 18px; align-items: baseline; padding: 18px 0">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #c0392b; min-width: 52px">drop</span>
+            <span style="font-size: 17px; line-height: 1.5; color: #24272b">it moved less than <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span> &mdash; the last kept value still stands in for it</span>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5a5d61">That is the whole criterion. <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span> is a single scalar, calibrated once per backbone &mdash; 0.3 for Cosmos, 1.2 for Omni &mdash; and the full formulation is in the paper.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <h3 style="margin: 0; font-size: 25px; font-weight: 600; letter-spacing: -0.01em">Latent Inpainting Transformer</h3>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #3c3f43">LIT refills the dropped positions before decoding, using interleaved spatial and temporal attention with 2D RoPE instead of full 3-D attention.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #e2ddd4; border: 1px solid #e2ddd4">
+          <div style="background: #fff; padding: 20px; display: flex; flex-direction: column; gap: 4px">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 500">&asymp;9&times;</div>
+            <div style="font-size: 14px; color: #6b665e; font-family: 'IBM Plex Sans', sans-serif">cheaper than full 3-D attention</div>
+          </div>
+          <div style="background: #fff; padding: 20px; display: flex; flex-direction: column; gap: 4px">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 500">2.7 M</div>
+            <div style="font-size: 14px; color: #6b665e; font-family: 'IBM Plex Sans', sans-serif">trainable parameters</div>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5a5d61">Because it is supervised on the latents as well as the decoded pixels, its output stays in the backbone's native latent space &mdash; a drop-in for anything that consumes those latents.</p>
+        <div style="border-top: 1px solid #e2ddd4">
+          <sc-for list="{{ litSpecs }}" as="r" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: 118px 1fr; gap: 18px; padding: 11px 0; border-bottom: 1px solid #e2ddd4; align-items: baseline">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a847a">{{ r.k }}</span>
+              <span style="font-size: 16px; line-height: 1.45; color: {{ r.color }}">{{ r.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 48px 0 0">
+    <div style="background: #fff; border-top: 2px solid #14171a; border-bottom: 2px solid #14171a; padding: 0 0 4px; overflow-x: auto">
+      <div style="display: flex; align-items: baseline; gap: 10px; padding: 10px 20px; border-bottom: 1px solid #14171a; min-width: 640px">
+        <strong style="font-size: 15px; font-weight: 600">Algorithm 1</strong>
+        <span style="font-size: 15px; color: #3c3f43">Latent Inpainting Transformer (LIT) pipeline</span>
+      </div>
+      <div style="padding: 10px 20px 8px; min-width: 640px; display: flex; flex-direction: column">
+        <div style="display: flex; gap: 8px; font-size: 14px; line-height: 1.5; padding-bottom: 6px">
+          <strong style="font-weight: 600; white-space: nowrap">Require:</strong>
+          <span>frozen encoder $\mathcal{E}$; frozen decoder $\mathcal{D}$; threshold $\tau$; LIT parameters $\theta$</span>
+        </div>
+        <sc-for list="{{ algoLines }}" as="l" hint-placeholder-count="16">
+          <div style="display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: baseline; padding: {{ l.padY }} 0; border-top: {{ l.rule }}; margin-top: {{ l.gap }}">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #b0a99e; text-align: right">{{ l.n }}</span>
+            <span style="font-size: {{ l.size }}; line-height: 1.4; font-weight: {{ l.weight }}; font-style: {{ l.italic }}; color: {{ l.color }}; padding-left: {{ l.indent }}">{{ l.body }}</span>
+            <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #8a847a; white-space: nowrap">{{ l.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; max-width: 92ch; font-family: 'IBM Plex Sans', sans-serif">Inference is a single encoder pass, a threshold comparison, and one LIT forward &mdash; the mask costs nothing beyond the encoding that was already happening.</p>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="cost">04 &nbsp;/&nbsp; Allocation cost</div>
+    <div style="border-top: 2px solid #14171a">
+      <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; padding: 12px 0; border-bottom: 1px solid #14171a; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #6b665e">
+        <div>Method</div>
+        <div style="text-align: right">NFE &darr;</div>
+        <div style="text-align: right">Secs &darr;</div>
+        <div style="text-align: right">Speed-up &uarr;</div>
+      </div>
+      <sc-for list="{{ costRows }}" as="r" hint-placeholder-count="3">
+        <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; padding: 17px 0; border-bottom: 1px solid #e2ddd4; font-size: 18px; align-items: baseline; background: {{ r.bg }}">
+          <div style="font-weight: {{ r.weight }}">{{ r.name }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 16px">{{ r.nfe }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 16px">{{ r.secs }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: {{ r.weight }}">{{ r.speedup }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; max-width: 88ch; font-family: 'IBM Plex Sans', sans-serif">Per clip on a single A10G. NFE counts the extra forward evaluations needed to <em>set</em> the budget. Ours needs none &mdash; the mask falls out of the encoder pass.</p>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="tau">05 &nbsp;/&nbsp; One knob: <span style="text-transform: none">&tau;</span></div>
+    <p style="margin: 0 0 26px; font-size: 19px; line-height: 1.6; color: #3c3f43; max-width: 76ch">Raising <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span> peels the static background away first and keeps the moving subject longest. Drag to sweep the threshold on a real clip.</p>
+
+    <div style="background: #fff; border: 1px solid #e2ddd4; margin-bottom: 18px">
+      <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 36px; align-items: center; padding: 18px 22px">
+        <div style="display: flex; align-items: baseline; gap: 9px">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #6b665e">&tau; =</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 38px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; min-width: 96px">{{ tauLabel }}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <input type="range" min="0" max="8" step="1" value="{{ tauIdx }}" onChange="{{ onTau }}" onInput="{{ onTau }}" style="width: 100%; margin: 0" />
+          <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a847a">
+            <span>{{ tauMin }}</span>
+            <span>{{ tauMax }}</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <sc-for list="{{ clipBtns }}" as="c" hint-placeholder-count="3">
+            <button type="button" onClick="{{ c.onClick }}" style="padding: 9px 15px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ c.bg }}; color: {{ c.fg }}">{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px; padding: 13px 22px; border-top: 1px solid #eeeae3; flex-wrap: wrap">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b665e">Backbone</span>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <sc-for list="{{ backboneBtns }}" as="b" hint-placeholder-count="2">
+            <button type="button" onClick="{{ b.onClick }}" style="padding: 8px 14px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ b.bg }}; color: {{ b.fg }}">{{ b.label }}</button>
+          </sc-for>
+        </div>
+        <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #8a847a">Each backbone has its own &tau; scale &mdash; Omni's latents have &asymp;2.4&times; the per-channel spread, so the same masking score sits higher.</span>
+      </div>
+    </div>
+
+    <figure style="margin: 0">
+      <img src="{{ sweepSrc }}" alt="Mask at the selected threshold, time running left to right" style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4; padding: 10px 14px" />
+      <figcaption style="margin: 14px 0 0; display: flex; gap: 26px; align-items: baseline; flex-wrap: wrap; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">
+        <span style="display: flex; gap: 16px">
+          <span style="display: inline-flex; align-items: center; gap: 7px"><span style="width: 11px; height: 11px; background: #2ca86b; display: inline-block"></span> kept</span>
+          <span style="display: inline-flex; align-items: center; gap: 7px"><span style="width: 11px; height: 11px; background: #c0392b; display: inline-block"></span> dropped</span>
+        </span>
+        <span style="flex: 1; min-width: 40ch">{{ backboneLabel }} backbone. The left-most panel is the input frame; the rest are the mask at successive latent timesteps, with the retained fraction printed beside <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span>.</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px; scroll-margin-top: 84px" id="rd">06 &nbsp;/&nbsp; Rate&ndash;distortion</div>
+    <p style="margin: 0 0 22px; font-size: 19px; line-height: 1.6; color: #3c3f43; max-width: 76ch">Sweeping the single threshold traces a smooth, monotonic rate&ndash;distortion curve on DAVIS &mdash; no retraining, one calibration per backbone. Red annotations give the change from the neighbouring operating point.</p>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px">
+      <sc-for list="{{ rdBtns }}" as="b" hint-placeholder-count="2">
+        <button type="button" onClick="{{ b.onClick }}" style="padding: 9px 15px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ b.bg }}; color: {{ b.fg }}">{{ b.label }}</button>
+      </sc-for>
+    </div>
+    <figure style="margin: 0">
+      <img src="{{ rdSrc }}" alt="PSNR, SSIM, LPIPS and FVD against keep rate for a sweep over the threshold" style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4; padding: 14px" />
+      <figcaption style="margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">{{ rdCaption }}</figcaption>
+    </figure>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="recon">07 &nbsp;/&nbsp; Reconstructions</div>
+    <p style="margin: 0 0 26px; font-size: 19px; line-height: 1.6; color: #3c3f43; max-width: 76ch">At 21&ndash;61% of the tokens we stay on par with ElasticTok at 80&ndash;100%, and with the full-rate Cosmos backbone. Drag the handle to wipe between the ground truth and the selected method.</p>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px">
+      <sc-for list="{{ methodBtns }}" as="m" hint-placeholder-count="3">
+        <button type="button" onClick="{{ m.onClick }}" style="padding: 9px 15px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ m.bg }}; color: {{ m.fg }}">{{ m.label }}</button>
+      </sc-for>
+    </div>
+    <div ref="{{ wipeRef }}" onMouseDown="{{ onWipeDown }}" onMouseMove="{{ onWipeMove }}" onTouchStart="{{ onWipeDown }}" onTouchMove="{{ onWipeMove }}" style="position: relative; width: 100%; border: 1px solid #e2ddd4; background: #fff; overflow: hidden; cursor: ew-resize; user-select: none; touch-action: none">
+      <img src="{{ qualSrc }}" alt="Reconstruction from the selected method" style="width: 100%; display: block; pointer-events: none" />
+      <div style="position: absolute; inset: 0; overflow: hidden; width: {{ wipePct }}%; pointer-events: none">
+        <img src="assets/qual/Original.jpg" alt="Ground truth frames" style="width: {{ wipeInvW }}%; display: block; max-width: none" />
+      </div>
+      <div style="position: absolute; top: 0; bottom: 0; left: {{ wipePct }}%; width: 2px; background: #f7f5f1; box-shadow: 0 0 0 1px rgba(0,0,0,0.35); pointer-events: none"></div>
+      <div style="position: absolute; top: 50%; left: {{ wipePct }}%; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; background: #f7f5f1; border: 1px solid #14171a; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; pointer-events: none">&#8596;</div>
+      <div style="position: absolute; top: 10px; left: 12px; padding: 4px 9px; background: rgba(20,23,26,0.82); color: #f7f5f1; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none">Ground truth</div>
+      <div style="position: absolute; top: 10px; right: 12px; padding: 4px 9px; background: rgba(20,23,26,0.82); color: #f7f5f1; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none">{{ methodLabel }}</div>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">Three UCF-101 clips, three frames each. Our keep rates are printed on the first frame of each clip.</p>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="results">08 &nbsp;/&nbsp; Reconstruction quality</div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; align-items: center">
+      <sc-for list="{{ datasetBtns }}" as="d" hint-placeholder-count="2">
+        <button type="button" onClick="{{ d.onClick }}" style="padding: 9px 15px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ d.bg }}; color: {{ d.fg }}">{{ d.label }}</button>
+      </sc-for>
+      <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #8a847a; margin-left: 8px">Click a column header to sort</span>
+    </div>
+    <div style="border-top: 2px solid #14171a; overflow-x: auto">
+      <div style="display: grid; grid-template-columns: 2fr 0.8fr 0.9fr 0.9fr 0.9fr 0.9fr; border-bottom: 1px solid #14171a; min-width: 720px">
+        <sc-for list="{{ resCols }}" as="col" hint-placeholder-count="6">
+          <button type="button" onClick="{{ col.onClick }}" style="padding: 12px 0; background: none; border: 0; cursor: pointer; text-align: {{ col.align }}; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: {{ col.color }}">{{ col.label }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ resRows }}" as="r" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 2fr 0.8fr 0.9fr 0.9fr 0.9fr 0.9fr; padding: 16px 0; border-bottom: 1px solid #e2ddd4; font-size: 17px; align-items: baseline; min-width: 720px; background: {{ r.bg }}">
+          <div style="font-weight: {{ r.weight }}; padding-left: {{ r.pad }}">{{ r.name }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #5a5d61">{{ r.keep }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px">{{ r.psnr }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px">{{ r.ssim }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px">{{ r.lpips }}</div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px">{{ r.fvd }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; max-width: 92ch; font-family: 'IBM Plex Sans', sans-serif">Baselines are matched to us &mdash; InfoTok to our emergent keep rate, ElasticTok-CV to a strict error threshold. At an identical budget we gain <strong style="color: #14171a; font-weight: 600">+2.81 dB</strong> (TokenBench) and <strong style="color: #14171a; font-weight: 600">+2.47 dB</strong> (DAVIS) over InfoTok.</p>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="ablations">09 &nbsp;/&nbsp; Streaming &amp; ablations</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start">
+      <figure style="margin: 0">
+        <h3 style="margin: 0 0 8px; font-size: 22px; font-weight: 600">Streaming with a cached reference</h3>
+        <p style="margin: 0 0 16px; font-size: 17px; line-height: 1.6; color: #3c3f43">A long video is encoded chunk by chunk. Without caching, every chunk restarts its own reference and pays a full-rate frame; carrying the last kept latent across the chunk boundary removes those resets entirely.</p>
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #c0392b">Per-chunk &mdash; no cache</span>
+              <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #8a847a">reference resets at every boundary</span>
+            </div>
+            <img src="assets/stream_perclip.jpg" alt="Token usage against time without caching: regular spikes to 100%" style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4" />
+          </div>
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #1d7a52">Cached reference</span>
+              <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #8a847a">one full-rate frame, then steady</span>
+            </div>
+            <img src="assets/stream_cached.jpg" alt="Token usage against time with a cached reference: flat at roughly 20%" style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4" />
+          </div>
+        </div>
+        <figcaption style="margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">Same 27-second video, same <span style="font-family: 'IBM Plex Mono', monospace">&tau;</span>. Without the cache, token usage snaps back to 100% on a regular beat even though the content has barely changed; with it, the rest of the video streams at roughly 20% of the tokens.</figcaption>
+      </figure>
+      <div>
+        <h3 style="margin: 0 0 16px; font-size: 22px; font-weight: 600">Ablations &mdash; DAVIS, 62% keep rate</h3>
+        <div style="border-top: 2px solid #14171a">
+          <div style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; padding: 11px 0; border-bottom: 1px solid #14171a; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6b665e">
+            <div>Variant</div>
+            <div style="text-align: right">PSNR&uarr;</div>
+            <div style="text-align: right">SSIM&uarr;</div>
+            <div style="text-align: right">LPIPS&darr;</div>
+            <div style="text-align: right">FVD&darr;</div>
+          </div>
+          <sc-for list="{{ ablRows }}" as="r" hint-placeholder-count="8">
+            <div style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; padding: {{ r.padY }} 0; border-bottom: 1px solid #e2ddd4; font-size: 15px; align-items: baseline; background: {{ r.bg }}">
+              <div style="font-weight: {{ r.weight }}; color: {{ r.color }}; font-family: {{ r.family }}; font-size: {{ r.size }}; letter-spacing: {{ r.ls }}; text-transform: {{ r.tt }}">{{ r.name }}</div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.psnr }}</div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.ssim }}</div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.lpips }}</div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.fvd }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">Fidelity comes from the inpainting: LIT gains <strong style="color: #14171a; font-weight: 600">+0.7 dB</strong> and <strong style="color: #14171a; font-weight: 600">&minus;170 FVD</strong> over copying the last kept latent.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px" id="masks">10 &nbsp;/&nbsp; Masks in the wild</div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px">
+      <sc-for list="{{ maskBtns }}" as="b" hint-placeholder-count="5">
+        <button type="button" onClick="{{ b.onClick }}" style="padding: 9px 15px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #14171a; background: {{ b.bg }}; color: {{ b.fg }}">{{ b.label }}</button>
+      </sc-for>
+    </div>
+    <figure style="margin: 0">
+      <img src="{{ maskSrc }}" alt="Kept and dropped tokens over time for the selected clip" style="width: 100%; display: block; background: #fff; border: 1px solid #e2ddd4" />
+      <figcaption style="margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: #5a5d61; font-family: 'IBM Plex Sans', sans-serif">The first panel is the input frame; the rest are the mask at successive latent timesteps at the operating threshold. Structure the tokeniser never needs to re-send &mdash; court markings, walls, foliage &mdash; drops out immediately, while the moving subject stays.</figcaption>
+    </figure>
+  </section>
+
+  <section id="bibtex" style="padding: 76px 0 0">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b665e; margin-bottom: 26px">11 &nbsp;/&nbsp; BibTeX</div>
+    <div style="position: relative; background: #14171a; color: #e8e4dc; padding: 62px 30px 30px; overflow-x: auto">
+      <button type="button" onClick="{{ onCopy }}" style="position: absolute; top: 16px; right: 18px; padding: 7px 13px; background: transparent; border: 1px solid #4a4e53; color: #cfc9c0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer">{{ copyLabel }}</button>
+      <pre style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 1.75; white-space: pre">@inproceedings&#123;dave2026adaptive,
+  title     = &#123;Adaptive Tokenisation via Temporal Redundancy Masking
+               and Latent Inpainting&#125;,
+  author    = &#123;Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar
+               and Bala, Gouranga and S A, Rajesh Kumar
+               and Babu, R. Venkatesh&#125;,
+  booktitle = &#123;British Machine Vision Conference (BMVC)&#125;,
+  year      = &#123;2026&#125;
+&#125;</pre>
+    </div>
+  </section>
+
+  <footer style="margin-top: 76px; padding-top: 26px; border-top: 1px solid #e2ddd4; display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; color: #6b665e">
+    <span>BMVC 2026 &middot; Phronetic AI &amp; Vision and AI Lab, IISc</span>
+    <span>Author pages and code release coming soon.</span>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const TAUS = {
+  cosmos: ['0.10','0.20','0.30','0.40','0.50','0.60','0.70','0.80','0.90'],
+  omni:   ['0.90','1.00','1.10','1.20','1.30','1.40','1.50','1.60','1.70']
+};
+const BACKBONES = [
+  { id: 'cosmos', label: 'Cosmos-CV', note: 'Cosmos-Tokenize1-CV 4\u00d78\u00d78' },
+  { id: 'omni', label: 'OmniTokenizer', note: 'OmniTokenizer' }
+];
+const CLIPS = [
+  { id: 'tennis', label: 'Tennis' },
+  { id: 'taichi', label: 'Tai chi' },
+  { id: 'flower', label: 'Flower' }
+];
+const METHODS = [
+  { id: 'Ours', label: 'Ours (\u03c4 = 0.3)' },
+  { id: 'ElasticTok', label: 'ElasticTok-CV' },
+  { id: 'Cosmos-4x8x8_CV', label: 'Cosmos-CV (full rate)' }
+];
+const MASK_CLIPS = [
+  { id: 'basketball', label: 'Basketball' },
+  { id: 'dance', label: 'Dance' },
+  { id: 'bmx', label: 'BMX' },
+  { id: 'butterfly', label: 'Butterfly' },
+  { id: 'flower', label: 'Flower' }
+];
+const RESULTS = {
+  TokenBench: [
+    { name: 'Cosmos-CV 4\u00d78\u00d78 (fixed)', keep: '100%', psnr: 35.38, ssim: 0.948, lpips: 0.078, fvd: 8.77 },
+    { name: 'OmniTokenizer (fixed)', keep: '100%', psnr: 27.05, ssim: 0.892, lpips: 0.128, fvd: 57.83 },
+    { name: 'ElasticTok-CV (MSE = 0.003)', keep: '40%', psnr: 30.87, ssim: 0.900, lpips: 0.154, fvd: 68.75 },
+    { name: 'InfoTok (discrete)', keep: '32%', psnr: 27.50, ssim: 0.817, lpips: 0.234, fvd: 189.16 },
+    { name: 'Ours (Cosmos, \u03c4 = 0.3)', keep: '32%', psnr: 30.31, ssim: 0.894, lpips: 0.141, fvd: 81.61, ours: true },
+    { name: 'Ours (Omni, \u03c4 = 1.2)', keep: '29%', psnr: 23.88, ssim: 0.790, lpips: 0.245, fvd: 168.82, ours: true }
+  ],
+  DAVIS: [
+    { name: 'Cosmos-CV 4\u00d78\u00d78 (fixed)', keep: '100%', psnr: 31.57, ssim: 0.918, lpips: 0.109, fvd: 61.33 },
+    { name: 'OmniTokenizer (fixed)', keep: '100%', psnr: 24.49, ssim: 0.837, lpips: 0.194, fvd: 244.81 },
+    { name: 'ElasticTok-CV (MSE = 0.003)', keep: '82%', psnr: 29.02, ssim: 0.878, lpips: 0.172, fvd: 200.97 },
+    { name: 'InfoTok (discrete)', keep: '62%', psnr: 25.80, ssim: 0.787, lpips: 0.244, fvd: 406.33 },
+    { name: 'Ours (Cosmos, \u03c4 = 0.3)', keep: '62%', psnr: 28.27, ssim: 0.856, lpips: 0.187, fvd: 312.66, ours: true },
+    { name: 'Ours (Omni, \u03c4 = 1.2)', keep: '52%', psnr: 22.50, ssim: 0.736, lpips: 0.293, fvd: 468.15, ours: true }
+  ]
+};
+const ABL = [
+  { head: '(a) Criterion \u2014 ref. last-kept, fill copy' },
+  { name: 'Pixel-L1', psnr: '25.59', ssim: '0.775', lpips: '0.261', fvd: '629.25' },
+  { name: 'Latent-L2', psnr: '27.42', ssim: '0.827', lpips: '0.200', fvd: '477.90' },
+  { name: 'Latent-cosine', psnr: '26.14', ssim: '0.814', lpips: '0.209', fvd: '509.28' },
+  { name: 'Latent-L1 (ours)', psnr: '27.54', ssim: '0.829', lpips: '0.198', fvd: '483.00', ours: true },
+  { head: '(b) Reference \u2014 crit. temporal-L1, fill LIT' },
+  { name: 'Previous frame + LIT', psnr: '27.62', ssim: '0.846', lpips: '0.194', fvd: '335.79' },
+  { name: 'Last-kept + LIT (ours)', psnr: '28.27', ssim: '0.856', lpips: '0.187', fvd: '312.66', ours: true },
+  { head: '(c) Fill \u2014 crit. temporal-L1, ref. last-kept' },
+  { name: 'Copy last-kept', psnr: '27.54', ssim: '0.829', lpips: '0.198', fvd: '483.00' },
+  { name: 'Linear interpolation', psnr: '26.30', ssim: '0.814', lpips: '0.215', fvd: '579.86' },
+  { name: 'LIT (ours)', psnr: '28.27', ssim: '0.856', lpips: '0.187', fvd: '312.66', ours: true }
+];
+const BIB = '@inproceedings{dave2026adaptive,\n  title     = {Adaptive Tokenisation via Temporal Redundancy Masking\n               and Latent Inpainting},\n  author    = {Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar\n               and Bala, Gouranga and S A, Rajesh Kumar\n               and Babu, R. Venkatesh},\n  booktitle = {British Machine Vision Conference (BMVC)},\n  year      = {2026}\n}';
+
+const ALGO = [
+  { kind: 'stage', body: 'Stage 1 \u00b7 Training' },
+  { kind: 'req', body: 'video dataset $\\mathcal{X}$; loss weights $\\lambda_\\mathrm{recon}, \\lambda_\\mathrm{latent}$' },
+  { n: '1', body: '$\\textbf{for}$ each training step $\\textbf{do}$' },
+  { n: '2', body: 'sample minibatch $\\{x_i\\}_{i=1}^{B} \\subset \\mathcal{X}$', indent: 18 },
+  { n: '3', body: '$z_i \\leftarrow \\mathcal{E}(x_i)$', indent: 18, note: 'encode with frozen encoder' },
+  { n: '4', body: '$m_i \\leftarrow \\mathrm{TemporalL1Mask}(z_i, \\tau)$', indent: 18, note: 'parameter-free, no learned scorer' },
+  { n: '5', body: '$\\tilde{z}_i \\leftarrow z_i \\odot m_i$', indent: 18, note: 'drop redundant positions' },
+  { n: '6', body: '$\\hat{z}_i \\leftarrow \\mathrm{LIT}_\\theta(\\tilde{z}_i)$', indent: 18, note: 'reconstruct latent' },
+  { n: '7', body: '$\\hat{x}_i \\leftarrow \\mathcal{D}(\\hat{z}_i)$', indent: 18, note: 'decode with frozen decoder' },
+  { n: '8', body: '$\\mathcal{L} \\leftarrow \\lambda_\\mathrm{recon}\\lVert x_i - \\hat{x}_i \\rVert_1 + \\lambda_\\mathrm{latent}\\lVert z_i - \\hat{z}_i \\rVert_1$', indent: 18 },
+  { n: '9', body: 'update $\\theta$ by gradient descent on $\\mathcal{L}$', indent: 18 },
+  { n: '10', body: '$\\textbf{end for}$' },
+  { kind: 'stage', body: 'Stage 2 \u00b7 Inference' },
+  { kind: 'req', body: 'input video $x$, threshold $\\tau$' },
+  { n: '11', body: '$z \\leftarrow \\mathcal{E}(x)$', note: 'single encoder pass' },
+  { n: '12', body: '$m \\leftarrow \\mathrm{TemporalL1Mask}(z, \\tau)$', note: '0 extra forward evaluations' },
+  { n: '13', body: '$\\tilde{z} \\leftarrow z \\odot m$', note: 'keep only $\\sum m$ tokens' },
+  { n: '14', body: '$\\hat{z} \\leftarrow \\mathrm{LIT}_\\theta(\\tilde{z})$' },
+  { n: '15', body: '$\\hat{x} \\leftarrow \\mathcal{D}(\\hat{z})$' },
+  { n: '16', body: '$\\textbf{return}\\;\\hat{x}$' }
+];
+
+class Component extends DCLogic {
+  state = { tauIdx: 2, backbone: 'cosmos', clip: 'tennis', maskClip: 'butterfly', rd: 'cosmos', method: 'Ours', wipe: 42, dataset: 'DAVIS', sortKey: null, sortDir: 1, copied: false };
+
+  typeset() {
+    const fn = window.renderMathInElement;
+    const root = this._rootEl || document.body;
+    if (!fn) { this._mathTries = (this._mathTries || 0) + 1; if (this._mathTries < 60) setTimeout(() => this.typeset(), 150); return; }
+    try {
+      fn(root, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    } catch (e) { /* leave source visible */ }
+  }
+
+  componentDidUpdate() { this.typeset(); }
+
+  componentDidMount() {
+    this._rootEl = document.body;
+    this.typeset();
+    this._up = () => { this._drag = false; };
+    window.addEventListener('mouseup', this._up);
+    window.addEventListener('touchend', this._up);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('mouseup', this._up);
+    window.removeEventListener('touchend', this._up);
+  }
+
+  setWipe(e) {
+    const el = this._wipeEl;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX) - r.left;
+    this.setState({ wipe: Math.max(0, Math.min(100, (x / r.width) * 100)) });
+  }
+
+  sorted() {
+    const rows = RESULTS[this.state.dataset].slice();
+    const k = this.state.sortKey;
+    if (!k) return rows;
+    const dir = this.state.sortDir;
+    return rows.sort((a, b) => {
+      if (k === 'name') return dir * a.name.localeCompare(b.name);
+      if (k === 'keep') return dir * (parseFloat(a.keep) - parseFloat(b.keep));
+      return dir * (a[k] - b[k]);
+    });
+  }
+
+  toggleSort(k) {
+    this.setState(s => s.sortKey === k ? { sortDir: -s.sortDir } : { sortKey: k, sortDir: k === 'name' ? 1 : -1 });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const cols = [
+      { key: 'name', label: 'Method', align: 'left' },
+      { key: 'keep', label: 'Keep \u2193', align: 'right' },
+      { key: 'psnr', label: 'PSNR \u2191', align: 'right' },
+      { key: 'ssim', label: 'SSIM \u2191', align: 'right' },
+      { key: 'lpips', label: 'LPIPS \u2193', align: 'right' },
+      { key: 'fvd', label: 'FVD \u2193', align: 'right' }
+    ];
+    return {
+      tauIdx: s.tauIdx,
+      tauLabel: TAUS[s.backbone][s.tauIdx],
+      tauMin: TAUS[s.backbone][0] + ' \u00b7 keep more tokens',
+      tauMax: 'keep fewer tokens \u00b7 ' + TAUS[s.backbone][8],
+      sweepSrc: 'assets/sweep/' + s.backbone + '_' + s.clip + '_' + s.tauIdx + '.jpg',
+      onTau: e => this.setState({ tauIdx: parseInt(e.target.value, 10) }),
+      backboneLabel: (BACKBONES.find(b => b.id === s.backbone) || BACKBONES[0]).note,
+      backboneBtns: BACKBONES.map(b => ({
+        label: b.label,
+        bg: s.backbone === b.id ? '#14171a' : 'transparent',
+        fg: s.backbone === b.id ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ backbone: b.id, tauIdx: b.id === 'omni' ? 3 : 2 })
+      })),
+      clipBtns: CLIPS.map(c => ({
+        label: c.label,
+        bg: s.clip === c.id ? '#14171a' : 'transparent',
+        fg: s.clip === c.id ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ clip: c.id })
+      })),
+
+      methodLabel: (METHODS.find(m => m.id === s.method) || METHODS[0]).label,
+      qualSrc: 'assets/qual/' + s.method + '.jpg',
+      methodBtns: METHODS.map(m => ({
+        label: m.label,
+        bg: s.method === m.id ? '#14171a' : 'transparent',
+        fg: s.method === m.id ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ method: m.id })
+      })),
+      wipePct: s.wipe,
+      wipeInvW: s.wipe > 0.5 ? (100 / s.wipe) * 100 : 20000,
+      wipeRef: el => { this._wipeEl = el; },
+      onWipeDown: e => { this._drag = true; this.setWipe(e); },
+      onWipeMove: e => { if (this._drag) this.setWipe(e); },
+
+      datasetBtns: ['TokenBench', 'DAVIS'].map(d => ({
+        label: d,
+        bg: s.dataset === d ? '#14171a' : 'transparent',
+        fg: s.dataset === d ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ dataset: d })
+      })),
+      resCols: cols.map(c => ({
+        label: s.sortKey === c.key ? c.label + (s.sortDir === 1 ? '  \u25b2' : '  \u25bc') : c.label,
+        align: c.align,
+        color: s.sortKey === c.key ? '#14171a' : '#6b665e',
+        onClick: () => this.toggleSort(c.key)
+      })),
+      resRows: this.sorted().map(r => ({
+        name: r.name,
+        keep: r.keep,
+        psnr: r.psnr.toFixed(2),
+        ssim: r.ssim.toFixed(3),
+        lpips: r.lpips.toFixed(3),
+        fvd: r.fvd.toFixed(2),
+        weight: r.ours ? 600 : 400,
+        bg: r.ours ? 'rgba(44,168,107,0.07)' : 'transparent',
+        pad: r.ours ? '10px' : '0px'
+      })),
+
+      ablRows: ABL.map(r => r.head ? {
+        name: r.head, psnr: '', ssim: '', lpips: '', fvd: '',
+        weight: 500, color: '#6b665e', family: "'IBM Plex Mono', monospace",
+        size: '10px', ls: '0.1em', tt: 'uppercase', padY: '14px', bg: 'transparent'
+      } : {
+        name: r.name, psnr: r.psnr, ssim: r.ssim, lpips: r.lpips, fvd: r.fvd,
+        weight: r.ours ? 600 : 400, color: '#14171a', family: "'Source Serif 4', serif",
+        size: '16px', ls: '0em', tt: 'none', padY: '12px',
+        bg: r.ours ? 'rgba(44,168,107,0.07)' : 'transparent'
+      }),
+
+      costRows: [
+        { name: 'ElasticTok-CV (binary search)', nfe: 'log\u2082 N', secs: '35.97', speedup: '1\u00d7', weight: 400, bg: 'transparent' },
+        { name: 'InfoTok (discrete)', nfe: '1', secs: '2.84', speedup: '13\u00d7', weight: 400, bg: 'transparent' },
+        { name: 'Ours', nfe: '0', secs: '1.15', speedup: '31\u00d7', weight: 600, bg: 'rgba(44,168,107,0.07)' }
+      ],
+
+      algoLines: ALGO.map((l, i) => l.kind === 'stage' ? {
+        n: '', body: l.body, note: '', size: '14px', weight: 600, italic: 'italic',
+        color: '#14171a', indent: '0px', padY: '6px',
+        rule: i === 0 ? '0' : '1px solid #14171a', gap: i === 0 ? '0px' : '10px'
+      } : l.kind === 'req' ? {
+        n: '', body: '$\\textbf{Require:}$ ' + l.body, note: '', size: '14px', weight: 400,
+        italic: 'normal', color: '#3c3f43', indent: '0px', padY: '2px', rule: '0', gap: '0px'
+      } : {
+        n: l.n, body: l.body, note: l.note || '', size: '14px', weight: 400, italic: 'normal',
+        color: '#14171a', indent: (l.indent || 0) + 'px', padY: '2px', rule: '0', gap: '0px'
+      }),
+
+      rdSrc: s.rd === 'omni' ? 'assets/rd_omni.png' : 'assets/rd_cosmos.png',
+      rdCaption: s.rd === 'omni'
+        ? 'OmniTokenizer on DAVIS, \u03c4 from 1.0 to 1.4 (65% down to 40% keep rate). Re-tuning \u03c4 to Omni\u2019s latent scale recovers the same monotonic behaviour.'
+        : 'Cosmos-CV on DAVIS, \u03c4 from 0.1 to 0.5 (94% down to 35% keep rate). All four metrics move in step, so a single scalar is enough to pick an operating point.',
+      rdBtns: BACKBONES.map(b => ({
+        label: b.label,
+        bg: s.rd === b.id ? '#14171a' : 'transparent',
+        fg: s.rd === b.id ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ rd: b.id })
+      })),
+
+      litSpecs: [
+        { k: 'Backbones', v: 'Cosmos-Tokenize1-CV 4\u00d78\u00d78, OmniTokenizer', color: '#14171a' },
+        { k: 'Latent grid', v: '16 \u00d7 9 \u00d7 32 \u00d7 32 \u2014 9216 token positions', color: '#14171a' }
+      ],
+
+      maskSrc: 'assets/masks_' + s.maskClip + '.jpg',
+      maskBtns: MASK_CLIPS.map(m => ({
+        label: m.label,
+        bg: s.maskClip === m.id ? '#14171a' : 'transparent',
+        fg: s.maskClip === m.id ? '#f7f5f1' : '#14171a',
+        onClick: () => this.setState({ maskClip: m.id })
+      })),
+
+      copyLabel: s.copied ? 'Copied' : 'Copy',
+      onCopy: () => {
+        navigator.clipboard && navigator.clipboard.writeText(BIB);
+        this.setState({ copied: true });
+        setTimeout(() => this.setState({ copied: false }), 1600);
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -40,6 +40,17 @@
   html, body, section, figure, nav, header, footer, div, span, p, h1, h2, h3, a, button, pre, input, img {
     transition: background-color 420ms cubic-bezier(0.4, 0, 0.2, 1), color 420ms cubic-bezier(0.4, 0, 0.2, 1), border-color 420ms cubic-bezier(0.4, 0, 0.2, 1), filter 420ms cubic-bezier(0.4, 0, 0.2, 1);
   }
+  @media (max-width: 1240px) { [data-rail] { display: none !important; } }
+  [data-rail] [data-rail-label] { opacity: 0; transform: translateX(-6px); pointer-events: none; transition: opacity 260ms ease, transform 260ms ease, color 220ms ease; }
+  [data-rail] [data-rail-tick] { opacity: 0.42; transition: width 260ms ease, background-color 220ms ease, opacity 260ms ease; }
+  [data-rail]:hover [data-rail-label],
+  [data-rail]:focus-within [data-rail-label] { opacity: 1; transform: none; }
+  [data-rail]:hover [data-rail-tick],
+  [data-rail]:focus-within [data-rail-tick] { opacity: 1; }
+  [data-rail] [data-rail-active] { opacity: 1 !important; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-rail] [data-rail-label], [data-rail] [data-rail-tick] { transition: none; }
+  }
   .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
   @media (max-width: 760px) {
     [data-algo], [data-formula] { overflow-x: visible; }
@@ -66,6 +77,22 @@
     [data-res-row][style*="var(--hl)"] [data-res-name] { padding-left: 8px !important; }
     [data-res-cell] { font-size: 12px !important; }
     [data-res-cell]::before { content: none; }
+
+    [data-cost-table], [data-abl-table] { overflow-x: visible; }
+    [data-cost-head], [data-cost-row] {
+      min-width: 0 !important;
+      grid-template-columns: 1.5fr 0.72fr 0.72fr 0.82fr !important;
+      gap: 6px;
+    }
+    [data-cost-head] { font-size: 9px !important; letter-spacing: 0.06em !important; }
+    [data-cost-row] > div { font-size: 14px !important; line-height: 1.35; }
+    [data-abl-head], [data-abl-row] {
+      min-width: 0 !important;
+      grid-template-columns: 1.6fr 0.7fr 0.72fr 0.76fr 0.8fr !important;
+      gap: 6px;
+    }
+    [data-abl-head] { font-size: 9px !important; letter-spacing: 0.05em !important; }
+    [data-abl-row] > div:not([data-abl-name]) { font-size: 13px !important; }
   }
   @media (max-width: 420px) {
     [data-formula] .katex { font-size: 0.7em; }
@@ -93,6 +120,15 @@
   input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 3px solid var(--paper); cursor: pointer; }
 </style>
 </helmet>
+
+<nav data-rail="1" aria-label="Sections" style="position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 25; display: flex; flex-direction: column; gap: 2px; padding: 18px 30px 18px 22px">
+  <sc-for list="{{ railItems }}" as="s" hint-placeholder-count="11">
+    <a href="{{ s.href }}" title="{{ s.label }}" data-rail-active="{{ s.isActive }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 4px 2px; opacity: {{ s.opacity }}; transition: opacity 220ms ease" style-hover="opacity: 1">
+      <span data-rail-tick="1" style="width: {{ s.tick }}; height: 1px; background: {{ s.color }}; flex: 0 0 auto"></span>
+      <span data-rail-label="1" style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; color: {{ s.color }}; transition: color 220ms ease, opacity 220ms ease, transform 220ms ease">{{ s.label }}</span>
+    </a>
+  </sc-for>
+</nav>
 
 <div style="max-width: 1180px; margin: 0 auto; padding: 0 clamp(18px, 5vw, 40px) 120px">
 
@@ -148,10 +184,10 @@
   </header>
 
   <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap; margin: 44px 0 0; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
-    <img src="assets/phroneticai_logo_final.png" data-logo="phroneticai_logo_final" alt="Phronetic AI" style="height: 30px; width: auto" />
-    <img src="assets/iisc_logo_final.png" data-logo="iisc_logo_final" alt="IISc" style="height: 42px; width: auto" />
-    <img src="assets/VAL_Logo2_alpha.png" data-logo="VAL_Logo2_alpha" alt="VAL" style="height: 32px; width: auto" />
-    <img src="assets/iitb_logo_final.png" data-logo="iitb_logo_final" alt="IIT Bombay" style="height: 38px; width: auto" />
+    <a href="https://www.phronetic.ai/" target="_blank" rel="noopener" style="display: inline-flex; text-decoration: none"><img src="assets/phroneticai_logo_final.png" data-logo="phroneticai_logo_final" alt="Phronetic AI" style="height: 30px; width: auto" /></a>
+    <a href="https://www.iisc.ac.in/" target="_blank" rel="noopener" style="display: inline-flex; text-decoration: none"><img src="assets/iisc_logo_final.png" data-logo="iisc_logo_final" alt="IISc" style="height: 42px; width: auto" /></a>
+    <a href="https://val.cds.iisc.ac.in/" target="_blank" rel="noopener" style="display: inline-flex; text-decoration: none"><img src="assets/VAL_Logo2_alpha.png" data-logo="VAL_Logo2_alpha" alt="VAL" style="height: 32px; width: auto" /></a>
+    <a href="https://www.iitb.ac.in/" target="_blank" rel="noopener" style="display: inline-flex; text-decoration: none"><img src="assets/iitb_logo_final.png" data-logo="iitb_logo_final" alt="IIT Bombay" style="height: 38px; width: auto" /></a>
   </div>
 
 
@@ -267,15 +303,15 @@
 
   <section style="padding: clamp(48px, 7vw, 76px) 0 0">
     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 26px" id="cost">04 &nbsp;/&nbsp; Allocation cost</div>
-    <div style="border-top: 2px solid var(--ink); overflow-x: auto">
-      <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; min-width: 460px; padding: 12px 0; border-bottom: 1px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted)">
+    <div data-cost-table="1" style="border-top: 2px solid var(--ink); overflow-x: auto">
+      <div data-cost-head="1" style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; min-width: 460px; padding: 12px 0; border-bottom: 1px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted)">
         <div>Method</div>
         <div style="text-align: right">NFE &darr;</div>
         <div style="text-align: right">Secs &darr;</div>
         <div style="text-align: right">Speed-up &uarr;</div>
       </div>
       <sc-for list="{{ costRows }}" as="r" hint-placeholder-count="3">
-        <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; min-width: 460px; padding: 17px 0; border-bottom: 1px solid var(--line); font-size: 18px; align-items: baseline; background: {{ r.bg }}">
+        <div data-cost-row="1" style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.8fr 1fr; min-width: 460px; padding: 17px 0; border-bottom: 1px solid var(--line); font-size: 18px; align-items: baseline; background: {{ r.bg }}">
           <div style="font-weight: {{ r.weight }}">{{ r.name }}</div>
           <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 16px">{{ r.nfe }}</div>
           <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 16px">{{ r.secs }}</div>
@@ -421,8 +457,8 @@
       </figure>
       <div>
         <h3 style="margin: 0 0 16px; font-size: 22px; font-weight: 600">Ablations &mdash; DAVIS, 62% keep rate</h3>
-        <div style="border-top: 2px solid var(--ink); overflow-x: auto">
-          <div style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; min-width: 440px; padding: 11px 0; border-bottom: 1px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted)">
+        <div data-abl-table="1" style="border-top: 2px solid var(--ink); overflow-x: auto">
+          <div data-abl-head="1" style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; min-width: 440px; padding: 11px 0; border-bottom: 1px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted)">
             <div>Variant</div>
             <div style="text-align: right">PSNR&uarr;</div>
             <div style="text-align: right">SSIM&uarr;</div>
@@ -430,8 +466,8 @@
             <div style="text-align: right">FVD&darr;</div>
           </div>
           <sc-for list="{{ ablRows }}" as="r" hint-placeholder-count="8">
-            <div style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; min-width: 440px; padding: {{ r.padY }} 0; border-bottom: 1px solid var(--line); font-size: 15px; align-items: baseline; background: {{ r.bg }}">
-              <div style="font-weight: {{ r.weight }}; color: {{ r.color }}; font-family: {{ r.family }}; font-size: {{ r.size }}; letter-spacing: {{ r.ls }}; text-transform: {{ r.tt }}">{{ r.name }}</div>
+            <div data-abl-row="1" style="display: grid; grid-template-columns: 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr; min-width: 440px; padding: {{ r.padY }} 0; border-bottom: 1px solid var(--line); font-size: 15px; align-items: baseline; background: {{ r.bg }}">
+              <div data-abl-name="1" style="font-weight: {{ r.weight }}; color: {{ r.color }}; font-family: {{ r.family }}; font-size: {{ r.size }}; letter-spacing: {{ r.ls }}; text-transform: {{ r.tt }}">{{ r.name }}</div>
               <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.psnr }}</div>
               <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.ssim }}</div>
               <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: {{ r.weight }}">{{ r.lpips }}</div>
@@ -461,12 +497,9 @@
     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 26px">11 &nbsp;/&nbsp; BibTeX</div>
     <div style="position: relative; background: var(--code-bg); color: var(--code-fg); padding: 62px 30px 30px; overflow-x: auto">
       <button type="button" onClick="{{ onCopy }}" style="position: absolute; top: 16px; right: 18px; padding: 7px 13px; background: transparent; border: 1px solid #4a4e53; color: #cfc9c0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer">{{ copyLabel }}</button>
-      <pre style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: break-word">@article&#123;dave2026adaptive,
-  title     = &#123;Adaptive Tokenisation Via Temporal Redundancy Masking
-               And Latent Inpainting&#125;,
-  author    = &#123;Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar
-               and Bala, Gouranga and Babu, R Venkatesh
-               and SA, Rajeshkumar&#125;,
+      <pre style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: break-word">@article&#123;dave2026adaptive,
+  title     = &#123;Adaptive Tokenisation Via Temporal Redundancy Masking And Latent Inpainting&#125;,
+  author    = &#123;Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar and Bala, Gouranga and Babu, R Venkatesh and SA, Rajeshkumar&#125;,
   journal   = &#123;arXiv preprint arXiv:2606.06158&#125;,
   year      = &#123;2026&#125;
 &#125;</pre>
@@ -538,7 +571,7 @@ const ABL = [
   { name: 'Linear interpolation', psnr: '26.30', ssim: '0.814', lpips: '0.215', fvd: '579.86' },
   { name: 'LIT (ours)', psnr: '28.27', ssim: '0.856', lpips: '0.187', fvd: '312.66', ours: true }
 ];
-const BIB = '@article{dave2026adaptive,\n  title     = {Adaptive Tokenisation Via Temporal Redundancy Masking\n               And Latent Inpainting},\n  author    = {Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar\n               and Bala, Gouranga and Babu, R Venkatesh\n               and SA, Rajeshkumar},\n  journal   = {arXiv preprint arXiv:2606.06158},\n  year      = {2026}\n}';
+const BIB = '@article{dave2026adaptive,\n  title     = {Adaptive Tokenisation Via Temporal Redundancy Masking And Latent Inpainting},\n  author    = {Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar and Bala, Gouranga and Babu, R Venkatesh and SA, Rajeshkumar},\n  journal   = {arXiv preprint arXiv:2606.06158},\n  year      = {2026}\n}';
 
 const ALGO = [
   { kind: 'stage', body: 'Stage 1 \u00b7 Training' },
@@ -563,8 +596,14 @@ const ALGO = [
   { n: '16', body: '$\\textbf{return}\\;\\hat{x}$' }
 ];
 
+const RAIL = [
+  ['top', 'Top'], ['budget', 'Budget'], ['abstract', 'Abstract'], ['method', 'Method'],
+  ['cost', 'Cost'], ['tau', 'Threshold'], ['rd', 'Rate\u2013distortion'], ['recon', 'Reconstructions'],
+  ['results', 'Results'], ['ablations', 'Ablations'], ['masks', 'Masks'], ['bibtex', 'BibTeX']
+];
+
 class Component extends DCLogic {
-  state = { theme: 'light', tauIdx: 2, backbone: 'cosmos', clip: 'tennis', maskClip: 'butterfly', rd: 'cosmos', method: 'Ours', wipe: 42, dataset: 'DAVIS', sortKey: null, sortDir: 1, copied: false };
+  state = { active: 'top', theme: 'light', tauIdx: 2, backbone: 'cosmos', clip: 'tennis', maskClip: 'butterfly', rd: 'cosmos', method: 'Ours', wipe: 42, dataset: 'DAVIS', sortKey: null, sortDir: 1, copied: false };
 
   typeset() {
     const fn = window.renderMathInElement;
@@ -611,12 +650,24 @@ class Component extends DCLogic {
     this.setState({ theme: t });
     this.applyTheme(t, true);
     this._rootEl = document.body;
+    this._onScroll = () => {
+      const mid = window.innerHeight * 0.35;
+      let cur = RAIL[0][0];
+      for (const [id] of RAIL) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= mid) cur = id;
+      }
+      if (cur !== this.state.active) this.setState({ active: cur });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onScroll();
     this.typeset();
     this._up = () => { this._drag = false; };
     window.addEventListener('mouseup', this._up);
     window.addEventListener('touchend', this._up);
   }
   componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('mouseup', this._up);
     window.removeEventListener('touchend', this._up);
   }
@@ -741,6 +792,18 @@ class Component extends DCLogic {
       } : {
         n: l.n, body: l.body, note: l.note || '', size: '14px', weight: 400, italic: 'normal',
         color: 'var(--ink)', indent: (l.indent || 0) + 'px', padY: '2px', rule: '0', gap: '0px'
+      }),
+
+      railItems: RAIL.map(([id, label]) => {
+        const on = s.active === id;
+        return {
+          href: '#' + id,
+          label: label,
+          tick: on ? '26px' : '14px',
+          color: on ? 'var(--ink)' : 'var(--muted2)',
+          opacity: on ? 1 : 0.42,
+          isActive: on ? '1' : null
+        };
       }),
 
       themeIcon: s.theme === 'dark' ? '\u25d1' : '\u25d0',

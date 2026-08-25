@@ -497,7 +497,7 @@
       <button type="button" onClick="{{ onCopy }}" style="position: absolute; top: 16px; right: 18px; padding: 7px 13px; background: transparent; border: 1px solid #4a4e53; color: #cfc9c0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer">{{ copyLabel }}</button>
       <pre style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: break-word">@article&#123;dave2026adaptive,
   title     = &#123;Adaptive Tokenisation Via Temporal Redundancy Masking And Latent Inpainting&#125;,
-  author    = &#123;Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar and Bala, Gouranga and Babu, R Venkatesh and SA, Rajeshkumar&#125;,
+  author    = &#123;Kevin Dave and Sai Aditya Patkuri and Chhaya Kumar Das and Gouranga Bala and Rajeshkumar SA and R. Venkatesh Babu&#125;,
   journal   = &#123;arXiv preprint arXiv:2606.06158&#125;,
   year      = &#123;2026&#125;
 &#125;</pre>
@@ -569,7 +569,7 @@ const ABL = [
   { name: 'Linear interpolation', psnr: '26.30', ssim: '0.814', lpips: '0.215', fvd: '579.86' },
   { name: 'LIT (ours)', psnr: '28.27', ssim: '0.856', lpips: '0.187', fvd: '312.66', ours: true }
 ];
-const BIB = '@article{dave2026adaptive,\n  title     = {Adaptive Tokenisation Via Temporal Redundancy Masking And Latent Inpainting},\n  author    = {Dave, Kevin and Patkuri, Sai Aditya and Das, Chhaya Kumar and Bala, Gouranga and Babu, R Venkatesh and SA, Rajeshkumar},\n  journal   = {arXiv preprint arXiv:2606.06158},\n  year      = {2026}\n}';
+const BIB = '@article{dave2026adaptive,\n  title     = {Adaptive Tokenisation Via Temporal Redundancy Masking And Latent Inpainting},\n  author    = {Kevin Dave and Sai Aditya Patkuri and Chhaya Kumar Das and Gouranga Bala and Rajeshkumar SA and R. Venkatesh Babu},\n  journal   = {arXiv preprint arXiv:2606.06158},\n  year      = {2026}\n}';
 
 const ALGO = [
   { kind: 'stage', body: 'Stage 1 \u00b7 Training' },
@@ -581,7 +581,7 @@ const ALGO = [
   { n: '5', body: '$\\tilde{z}_i \\leftarrow z_i \\odot m_i$', indent: 18, note: 'drop redundant positions' },
   { n: '6', body: '$\\hat{z}_i \\leftarrow \\mathrm{LIT}_\\theta(\\tilde{z}_i)$', indent: 18, note: 'reconstruct latent' },
   { n: '7', body: '$\\hat{x}_i \\leftarrow \\mathcal{D}(\\hat{z}_i)$', indent: 18, note: 'decode with frozen decoder' },
-  { n: '8', body: '$\\mathcal{L} \\leftarrow \\lambda_\\mathrm{recon}\\lVert x_i - \\hat{x}_i \\rVert_1 + \\lambda_\\mathrm{latent}\\lVert z_i - \\hat{z}_i \\rVert_1$', indent: 18 },
+  { n: '8', body: '$\\mathcal{L} \\leftarrow \\lambda_\\mathrm{recon}\\lVert x_i - \\hat{x}_i \\rVert_2^2 + \\lambda_\\mathrm{latent}\\lVert z_i - \\hat{z}_i \\rVert_2^2$', indent: 18 },
   { n: '9', body: 'update $\\theta$ by gradient descent on $\\mathcal{L}$', indent: 18 },
   { n: '10', body: '$\\textbf{end for}$' },
   { kind: 'stage', body: 'Stage 2 \u00b7 Inference' },

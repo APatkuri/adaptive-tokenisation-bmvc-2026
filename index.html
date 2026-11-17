@@ -195,6 +195,17 @@
       <img src="assets/token_usage.jpg" alt="Token usage over time for one clip: static intervals collapse towards zero, motion and scene cuts spike." style="width: 100%; display: block; background: var(--figbg); border: 1px solid var(--line)" />
       <figcaption style="margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: var(--text3); max-width: 88ch; font-family: 'IBM Plex Sans', sans-serif">One clip, one fixed threshold. The retained fraction tracks the content: static intervals collapse towards zero, motion and scene cuts spike to full rate. Per-video drop rates span <strong style="color: var(--ink); font-weight: 600">5.15% to 86.10%</strong> on UCF-101 &mdash; without any per-clip search.</figcaption>
     </figure>
+    <div style="margin-top: clamp(32px, 4.5vw, 48px)">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px">
+        <sc-for list="{{ vidBtns }}" as="b" hint-placeholder-count="5">
+          <button type="button" onClick="{{ b.onClick }}" style="padding: 10px 15px; min-height: 40px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--ink); background: {{ b.bg }}; color: {{ b.fg }}">{{ b.label }}</button>
+        </sc-for>
+      </div>
+      <figure style="margin: 0">
+        <video data-token-video="1" src="{{ vidSrc }}" autoplay muted loop playsinline controls preload="auto" aria-label="Original, reconstruction and kept-token mask side by side, with the token-usage curve below" style="width: 100%; aspect-ratio: 2 / 1; display: block; background: var(--figbg); border: 1px solid var(--line)"></video>
+        <figcaption style="margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: var(--text3); max-width: 88ch; font-family: 'IBM Plex Sans', sans-serif">{{ vidCaption }}</figcaption>
+      </figure>
+    </div>
   </section>
 
   <section style="padding: clamp(48px, 7vw, 76px) 0 0">
@@ -530,6 +541,13 @@ const METHODS = [
   { id: 'ElasticTok', label: 'ElasticTok-CV' },
   { id: 'Cosmos-4x8x8_CV', label: 'Cosmos-CV (full rate)' }
 ];
+const VID_CLIPS = [
+  { id: 'basketball', label: 'Basketball', caption: 'Original, reconstruction and kept-token mask, with the token-usage curve below. After the first frame, only the players carry tokens. The court and surrounding buildings drop out, and usage stays between roughly 10% and 30%.' },
+  { id: 'bmx', label: 'BMX', caption: 'Original, reconstruction and kept-token mask, with the token-usage curve below. The camera moves with the rider, so much of the frame changes and usage stays around 50–60%, far above the static scenes.' },
+  { id: 'butterfly_cached', label: 'Butterfly', caption: 'Original, reconstruction and kept-token mask, with the token-usage curve below, encoded with a cached reference. Tokens stay on the butterfly and a few moving leaves. After the first frame there are no full-rate resets, and usage stays between roughly 5% and 20%.' },
+  { id: 'bridge', label: 'Robot arm', caption: 'Original, reconstruction and kept-token mask, with the token-usage curve below. A robot manipulation clip from a fixed camera: tokens follow the arm, while the stove, sink and counter drop out. Usage stays between roughly 15% and 35%.' },
+  { id: 'dance_cached', label: 'Dance — streaming', caption: 'The 27-second streaming example from §09, encoded chunk by chunk with a cached reference. After a single full-rate frame, the two dancers carry the budget and the rest of the video runs at roughly 20% of the tokens.' }
+];
 const MASK_CLIPS = [
   { id: 'basketball', label: 'Basketball' },
   { id: 'dance', label: 'Dance' },
@@ -601,7 +619,7 @@ const RAIL = [
 ];
 
 class Component extends DCLogic {
-  state = { active: 'top', theme: 'light', tauIdx: 2, backbone: 'cosmos', clip: 'tennis', maskClip: 'butterfly', rd: 'cosmos', method: 'Ours', wipe: 42, dataset: 'DAVIS', sortKey: null, sortDir: 1, copied: false };
+  state = { active: 'top', theme: 'light', tauIdx: 2, backbone: 'cosmos', clip: 'tennis', maskClip: 'butterfly', vidClip: 'bridge', rd: 'cosmos', method: 'Ours', wipe: 42, dataset: 'DAVIS', sortKey: null, sortDir: 1, copied: false };
 
   typeset() {
     const fn = window.renderMathInElement;
@@ -618,7 +636,22 @@ class Component extends DCLogic {
     } catch (e) { /* leave source visible */ }
   }
 
-  componentDidUpdate() { this.typeset(); this.syncLogos(this.state.theme); }
+  componentDidUpdate() { this.typeset(); this.syncLogos(this.state.theme); this.syncVideo(); }
+
+  // The template drops boolean media attributes (muted/loop/controls), so set them here.
+  // Autoplay also needs the muted property set before play().
+  syncVideo() {
+    const v = document.querySelector('video[data-token-video]');
+    if (!v) return;
+    ['muted', 'loop', 'controls'].forEach(a => { v[a] = true; v.setAttribute(a, ''); });
+    if (v.paused && !v._userPaused) v.play().catch(() => {});
+    if (!v._bound) {
+      v._bound = true;
+      v.addEventListener('pause', () => { if (!v.ended && v.readyState > 2) v._userPaused = true; });
+      v.addEventListener('play', () => { v._userPaused = false; });
+      v.addEventListener('loadstart', () => { v._userPaused = false; v.muted = true; v.play().catch(() => {}); });
+    }
+  }
 
   applyTheme(t, instant) {
     const el = document.documentElement;
@@ -660,6 +693,7 @@ class Component extends DCLogic {
     window.addEventListener('scroll', this._onScroll, { passive: true });
     this._onScroll();
     this.typeset();
+    this.syncVideo();
     this._up = () => { this._drag = false; };
     window.addEventListener('mouseup', this._up);
     window.addEventListener('touchend', this._up);
@@ -847,6 +881,15 @@ class Component extends DCLogic {
         { k: 'Backbones', v: 'Cosmos-Tokenize1-CV 4\u00d78\u00d78, OmniTokenizer', color: 'var(--ink)' },
         { k: 'Latent grid', v: '16 \u00d7 9 \u00d7 32 \u00d7 32 \u2014 9216 token positions', color: 'var(--ink)' }
       ],
+
+      vidSrc: 'assets/videos/token_usage_' + s.vidClip + '.mp4',
+      vidCaption: (VID_CLIPS.find(c => c.id === s.vidClip) || VID_CLIPS[0]).caption,
+      vidBtns: VID_CLIPS.map(c => ({
+        label: c.label,
+        bg: s.vidClip === c.id ? 'var(--ink)' : 'transparent',
+        fg: s.vidClip === c.id ? 'var(--paper)' : 'var(--ink)',
+        onClick: () => this.setState({ vidClip: c.id })
+      })),
 
       maskSrc: 'assets/masks_' + s.maskClip + '.jpg',
       maskBtns: MASK_CLIPS.map(m => ({
